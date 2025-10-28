@@ -1,0 +1,28 @@
+{
+  "name": "mesto",
+  "version": "1.0.0",
+  "description": "Ya.Praktikum project",
+  "main": "src/scripts/index.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "dev": "webpack serve --open"
+  },
+  "keywords": [],
+  "author": "Oleg Polovinko",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.28.5",
+    "@babel/preset-env": "^7.28.5",
+    "babel-loader": "^10.0.0",
+    "clean-webpack-plugin": "^4.0.0",
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.4",
+    "mini-css-extract-plugin": "^2.9.4",
+    "webpack": "^5.102.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
+  },
+  "dependencies": {
+    "core-js": "^3.46.0"
+  }
+}
