@@ -1,4 +1,5 @@
 import '../pages/index.css';
+import { initialCards } from './cards';
 
 // Темплейт карточки
 const cardTemplate = document
