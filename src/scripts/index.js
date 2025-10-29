@@ -14,6 +14,10 @@ const userDescriptionElement = document.querySelector('.profile__description');
 const userNameInput = document.querySelector('.popup__input_type_name');
 const descriptionInput = document.querySelector('.popup__input_type_description');
 
+/* Card Add Inputs */
+const cardAddNameInput = document.querySelector('.popup__input_type_card-name');
+const cardAddUrlInput = document.querySelector('.popup__input_type_url');
+
 /* Modals */
 const profileEditModal = document.querySelector('.popup_type_edit');
 const cardAddModal = document.querySelector('.popup_type_new-card');
@@ -42,7 +46,7 @@ const fillEditProfileInputs = () => {
 };
 
 cardAddBtn.addEventListener('click', () => {
-  openModal(cardAddModal);
+  openModal(cardAddModal, handleSubmitAddCard);
 });
 
 profileEditBtn.addEventListener('click', () => {
@@ -55,6 +59,28 @@ const handleSubmitProfileEdit = (evt) => {
 
   userNameElement.textContent = userNameInput.value;
   userDescriptionElement.textContent = descriptionInput.value;
+};
+
+const clearCardAddForm = () => {
+  cardAddNameInput.value = '';
+  cardAddUrlInput.value = '';
+};
+
+const handleSubmitAddCard = (evt) => {
+  evt.preventDefault();
+
+  placesWrap.prepend(
+    createCardElement(
+      { name: cardAddNameInput.value, link: cardAddUrlInput.value },
+      {
+        onDelete: handleDeleteCard,
+        onLike: handleLikeCard,
+        onClick: handleOpenCard,
+      }
+    )
+  );
+
+  clearCardAddForm();
 };
 
 modalWindows.forEach((modal) => {
