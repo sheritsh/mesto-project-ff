@@ -1,34 +1,51 @@
 import '../pages/index.css';
 import { initialCards } from './cards';
+import { createCardElement } from './card';
+import { openModal } from './modal';
 
-// Темплейт карточки
-const cardTemplate = document
-  .querySelector('#card-template')
-  .content.querySelector('.places__item');
-
-// DOM узлы
+// DOM ELEMENTS
 const placesWrap = document.querySelector('.places__list');
 
-function createCardElement(data, onDelete) {
-  const cardElement = cardTemplate.cloneNode(true);
-  const deleteButton = cardElement.querySelector('.card__delete-button');
+/* Modals */
+const profileEditModal = document.querySelector('.popup_type_edit');
+const cardAddModal = document.querySelector('.popup_type_new-card');
+const imagePreviewModal = document.querySelector('.popup_type_image');
+const modalWindows = document.querySelectorAll('.popup');
 
-  const cardImage = cardElement.querySelector('.card__image');
-  cardImage.src = data.link;
-  cardImage.alt = data.name;
+/* Btns to open modal */
+const profileEditBtn = document.querySelector('.profile__edit-button');
+const cardAddBtn = document.querySelector('.profile__add-button');
 
-  cardElement.querySelector('.card__title').textContent = data.name;
-
-  deleteButton.addEventListener('click', onDelete);
-  return cardElement;
-}
-
-// должна быть отдельной функций, можно стрелочной
-function handleDeleteCard(evt) {
+const handleDeleteCard = (evt) => {
   evt.target.closest('.card').remove();
-}
+};
 
-// можно сделать и через простой цикл
+const handleLikeCard = (evt) => {
+  evt.target.classList.toggle('card__like-button_is-active');
+};
+
+const handleOpenCard = () => {
+  openModal(imagePreviewModal);
+};
+
+cardAddBtn.addEventListener('click', () => {
+  openModal(cardAddModal);
+});
+
+profileEditBtn.addEventListener('click', () => {
+  openModal(profileEditModal);
+});
+
+modalWindows.forEach((modal) => {
+  modal.classList.add('popup_is-animated');
+});
+
 initialCards.forEach((data) => {
-  placesWrap.append(createCardElement(data, handleDeleteCard));
+  placesWrap.append(
+    createCardElement(data, {
+      onDelete: handleDeleteCard,
+      onLike: handleLikeCard,
+      onClick: handleOpenCard,
+    })
+  );
 });
