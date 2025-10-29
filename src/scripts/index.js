@@ -1,6 +1,6 @@
 import '../pages/index.css';
 import { initialCards } from './cards';
-import { createCardElement } from './card';
+import { createCardElement, handleDeleteCard, handleLikeCard, handleOpenCard } from './card';
 import { openModal } from './modal';
 
 // DOM ELEMENTS
@@ -18,33 +18,21 @@ const descriptionInput = document.querySelector('.popup__input_type_description'
 const cardAddNameInput = document.querySelector('.popup__input_type_card-name');
 const cardAddUrlInput = document.querySelector('.popup__input_type_url');
 
+/* Image Preview Selectors */
+const imgPreviewElement = document.querySelector('.popup__image');
+const imgCaptionElement = document.querySelector('.popup__caption');
+
 /* Modals */
 const profileEditModal = document.querySelector('.popup_type_edit');
 const cardAddModal = document.querySelector('.popup_type_new-card');
-const imagePreviewModal = document.querySelector('.popup_type_image');
+export const imagePreviewModal = document.querySelector('.popup_type_image');
 const modalWindows = document.querySelectorAll('.popup');
 
 /* Btns to open modal */
 const profileEditBtn = document.querySelector('.profile__edit-button');
 const cardAddBtn = document.querySelector('.profile__add-button');
 
-const handleDeleteCard = (evt) => {
-  evt.target.closest('.card').remove();
-};
-
-const handleLikeCard = (evt) => {
-  evt.target.classList.toggle('card__like-button_is-active');
-};
-
-const handleOpenCard = () => {
-  openModal(imagePreviewModal);
-};
-
-const fillEditProfileInputs = () => {
-  userNameInput.value = userNameElement.textContent;
-  descriptionInput.value = userDescriptionElement.textContent;
-};
-
+// SET EVENT LISTENERS
 cardAddBtn.addEventListener('click', () => {
   openModal(cardAddModal, handleSubmitAddCard);
 });
@@ -53,6 +41,12 @@ profileEditBtn.addEventListener('click', () => {
   fillEditProfileInputs();
   openModal(profileEditModal, handleSubmitProfileEdit);
 });
+
+// FORM HANDLERS
+const fillEditProfileInputs = () => {
+  userNameInput.value = userNameElement.textContent;
+  descriptionInput.value = userDescriptionElement.textContent;
+};
 
 const handleSubmitProfileEdit = (evt) => {
   evt.preventDefault();
@@ -68,16 +62,14 @@ const clearCardAddForm = () => {
 
 const handleSubmitAddCard = (evt) => {
   evt.preventDefault();
+  const cardData = { name: cardAddNameInput.value, link: cardAddUrlInput.value };
 
   placesWrap.prepend(
-    createCardElement(
-      { name: cardAddNameInput.value, link: cardAddUrlInput.value },
-      {
-        onDelete: handleDeleteCard,
-        onLike: handleLikeCard,
-        onClick: handleOpenCard,
-      }
-    )
+    createCardElement(cardData, {
+      onDelete: handleDeleteCard,
+      onLike: handleLikeCard,
+      onClick: handleOpenCard(imgPreviewElement, imgCaptionElement, cardData),
+    })
   );
 
   clearCardAddForm();
@@ -92,7 +84,7 @@ initialCards.forEach((data) => {
     createCardElement(data, {
       onDelete: handleDeleteCard,
       onLike: handleLikeCard,
-      onClick: handleOpenCard,
+      onClick: handleOpenCard(imgPreviewElement, imgCaptionElement, data),
     })
   );
 });

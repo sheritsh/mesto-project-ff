@@ -3,7 +3,6 @@ const openModal = (modalElem, onSubmit) => {
 
   const onCloseClick = (evt) => {
     if (evt.target.matches('.popup__close') || evt.target.matches('.popup_is-opened')) {
-      console.log(evt.target);
       closeModal(modalElem, onCloseClick, onEscKeydown, onSubmit);
     }
   };
