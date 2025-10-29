@@ -25,13 +25,13 @@ const openModal = (modalElem, onSubmit) => {
   }
 };
 
-const closeModal = (modalElem, onCloseClick, onEscKeydown, onSubmit) => {
+const closeModal = (modalElem, onCloseClick, onEscKeydown, handleFormSubmit) => {
   modalElem.classList.remove('popup_is-opened');
 
   modalElem.removeEventListener('click', onCloseClick);
   document.removeEventListener('keydown', onEscKeydown);
-  if (onSubmit) {
-    modalElem.removeEventListener('submit', onSubmit);
+  if (handleFormSubmit) {
+    modalElem.removeEventListener('submit', handleFormSubmit);
   }
 };
 

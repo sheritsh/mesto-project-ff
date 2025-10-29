@@ -1,6 +1,6 @@
 import '../pages/index.css';
 import { initialCards } from './cards';
-import { createCardElement, handleDeleteCard, handleLikeCard, handleOpenCard } from './card';
+import { createCardElement, handleDeleteCard, handleLikeCard } from './card';
 import { openModal } from './modal';
 
 // DOM ELEMENTS
@@ -56,8 +56,18 @@ const handleSubmitProfileEdit = (evt) => {
 };
 
 const clearCardAddForm = () => {
-  cardAddNameInput.value = '';
-  cardAddUrlInput.value = '';
+  document.forms['new-place'].reset();
+};
+
+const handleOpenCard = (cardData) => {
+  return () => {
+    imgPreviewElement.src = ''; // prevent last image render
+    imgPreviewElement.src = cardData.link;
+    imgPreviewElement.alt = cardData.name;
+    imgCaptionElement.textContent = cardData.name;
+
+    openModal(imagePreviewModal);
+  };
 };
 
 const handleSubmitAddCard = (evt) => {
@@ -68,7 +78,7 @@ const handleSubmitAddCard = (evt) => {
     createCardElement(cardData, {
       onDelete: handleDeleteCard,
       onLike: handleLikeCard,
-      onClick: handleOpenCard(imgPreviewElement, imgCaptionElement, cardData),
+      onClick: handleOpenCard(cardData),
     })
   );
 
@@ -84,7 +94,7 @@ initialCards.forEach((data) => {
     createCardElement(data, {
       onDelete: handleDeleteCard,
       onLike: handleLikeCard,
-      onClick: handleOpenCard(imgPreviewElement, imgCaptionElement, data),
+      onClick: handleOpenCard(data),
     })
   );
 });

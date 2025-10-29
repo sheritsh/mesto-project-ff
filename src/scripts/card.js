@@ -1,6 +1,3 @@
-import { openModal } from './modal';
-import { imagePreviewModal } from './index';
-
 const cardTemplate = document
   .querySelector('#card-template')
   .content.querySelector('.places__item');
@@ -31,15 +28,4 @@ const handleLikeCard = (evt) => {
   evt.target.classList.toggle('card__like-button_is-active');
 };
 
-const handleOpenCard = (imgPreviewElement, imgCaptionElement, cardData) => {
-  return () => {
-    imgPreviewElement.src = ''; // prevent last image render
-    imgPreviewElement.src = cardData.link;
-    imgPreviewElement.alt = cardData.name;
-    imgCaptionElement.textContent = cardData.name;
-
-    openModal(imagePreviewModal);
-  };
-};
-
-export { createCardElement, handleDeleteCard, handleLikeCard, handleOpenCard };
+export { createCardElement, handleDeleteCard, handleLikeCard };
