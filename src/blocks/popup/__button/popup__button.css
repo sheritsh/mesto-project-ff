@@ -12,9 +12,17 @@
   border: none;
   transition: visibility 0s, background 0.3s;
   margin-top: 48px;
+  transition: 0.3s;
 }
 
-.popup__button:hover {
+.popup__button_disabled {
+  background: transparent;
+  border: 1px solid #c4c4c4;
+  color: #c4c4c4;
+  cursor: not-allowed;
+}
+
+.popup__button:hover:not(.popup__button_disabled) {
   background: rgba(0, 0, 0, 0.8);
   cursor: pointer;
 }

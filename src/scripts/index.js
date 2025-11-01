@@ -2,6 +2,7 @@ import '../pages/index.css';
 import { initialCards } from './cards';
 import { createCardElement, handleDeleteCard, handleLikeCard } from './card';
 import { openModal } from './modal';
+import { enableValidation, clearValidation } from './validation';
 
 // DOM ELEMENTS
 const placesWrap = document.querySelector('.places__list');
@@ -38,7 +39,9 @@ cardAddBtn.addEventListener('click', () => {
 });
 
 profileEditBtn.addEventListener('click', () => {
+  const profileEditForm = document.querySelector('form[name="edit-profile"]');
   fillEditProfileInputs();
+  clearValidation(profileEditForm, validationConfig);
   openModal(profileEditModal, handleSubmitProfileEdit);
 });
 
@@ -56,7 +59,9 @@ const handleSubmitProfileEdit = (evt) => {
 };
 
 const clearCardAddForm = () => {
-  document.forms['new-place'].reset();
+  const cardAddForm = document.querySelector('form[name="new-place"]');
+  cardAddForm.reset();
+  clearValidation(cardAddForm, validationConfig);
 };
 
 const handleOpenCard = (cardData) => {
@@ -98,3 +103,14 @@ initialCards.forEach((data) => {
     })
   );
 });
+
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible',
+};
+
+enableValidation(validationConfig);

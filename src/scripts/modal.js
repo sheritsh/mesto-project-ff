@@ -3,13 +3,13 @@ const openModal = (modalElem, onSubmit) => {
 
   const onCloseClick = (evt) => {
     if (evt.target.matches('.popup__close') || evt.target.matches('.popup_is-opened')) {
-      closeModal(modalElem, onCloseClick, onEscKeydown, onSubmit);
+      closeModal(modalElem, onCloseClick, onEscKeydown, handleFormSubmit);
     }
   };
 
   const onEscKeydown = (evt) => {
     if (evt.key === 'Escape') {
-      closeModal(modalElem, onCloseClick, onEscKeydown, onSubmit);
+      closeModal(modalElem, onCloseClick, onEscKeydown, handleFormSubmit);
     }
   };
 
