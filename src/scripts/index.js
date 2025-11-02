@@ -10,6 +10,7 @@ import {
   deleteCard,
   likeCard,
   unlikeCard,
+  changeUserAvatar,
 } from './api';
 
 // DOM ELEMENTS
@@ -28,6 +29,9 @@ const descriptionInput = document.querySelector('.popup__input_type_description'
 const cardAddNameInput = document.querySelector('.popup__input_type_card-name');
 const cardAddUrlInput = document.querySelector('.popup__input_type_url');
 
+/* Avatar Change Inputs */
+const avatarUrlInput = document.querySelector('.popup__input_type_avatar-url');
+
 /* Image Preview Selectors */
 const imgPreviewElement = document.querySelector('.popup__image');
 const imgCaptionElement = document.querySelector('.popup__caption');
@@ -35,20 +39,28 @@ const imgCaptionElement = document.querySelector('.popup__caption');
 /* Modals */
 const profileEditModal = document.querySelector('.popup_type_edit');
 const cardAddModal = document.querySelector('.popup_type_new-card');
-export const imagePreviewModal = document.querySelector('.popup_type_image');
+const imagePreviewModal = document.querySelector('.popup_type_image');
+const avatarEditModal = document.querySelector('.popup_type_avatar-edit');
 const modalWindows = document.querySelectorAll('.popup');
 
 /* Btns to open modal */
 const profileEditBtn = document.querySelector('.profile__edit-button');
 const cardAddBtn = document.querySelector('.profile__add-button');
+const avatarEditBtn = document.querySelector('.profile__image-hover-effect');
+
+/* Submit btns */
+const submitBtns = document.querySelectorAll('.popup__button');
 
 // GLOBAL STORE
 let userProfileData = {};
-let cardsCollectionData = [];
 
 // SET EVENT LISTENERS
 cardAddBtn.addEventListener('click', () => {
   openModal(cardAddModal, handleSubmitAddCard);
+});
+
+avatarEditBtn.addEventListener('click', () => {
+  openModal(avatarEditModal, handleSubmitChangeAvatar);
 });
 
 profileEditBtn.addEventListener('click', () => {
@@ -67,18 +79,20 @@ const fillEditProfileInputs = () => {
 const handleSubmitProfileEdit = (evt) => {
   evt.preventDefault();
 
+  changeSubmitBtnsText('Сохранение...');
   changeUserInformation({ name: userNameInput.value, about: descriptionInput.value })
     .then((userData) => {
       userNameElement.textContent = userData.name;
       userDescriptionElement.textContent = userData.about;
     })
-    .catch((error) => console.error('Failed: ', error));
+    .catch((error) => console.error('Failed: ', error))
+    .finally(() => changeSubmitBtnsText('Сохранить'));
 };
 
-const clearCardAddForm = () => {
-  const cardAddForm = document.querySelector('form[name="new-place"]');
-  cardAddForm.reset();
-  clearValidation(cardAddForm, validationConfig);
+const clearForm = (formName) => {
+  const formElement = document.querySelector(`form[name="${formName}"]`);
+  formElement.reset();
+  clearValidation(formElement, validationConfig);
 };
 
 const handleOpenCard = (cardData) => {
@@ -127,6 +141,7 @@ const handleSubmitAddCard = (evt) => {
   evt.preventDefault();
   const cardInputData = { name: cardAddNameInput.value, link: cardAddUrlInput.value };
 
+  changeSubmitBtnsText('Сохранение...');
   postNewCard(cardInputData)
     .then((cardData) => {
       placesWrap.prepend(
@@ -137,9 +152,21 @@ const handleSubmitAddCard = (evt) => {
         })
       );
     })
-    .catch((error) => console.error('Failed: ', error));
+    .catch((error) => console.error('Failed: ', error))
+    .finally(() => changeSubmitBtnsText('Сохранить'));
 
-  clearCardAddForm();
+  clearForm('new-place');
+};
+
+const handleSubmitChangeAvatar = () => {
+  changeSubmitBtnsText('Сохранение...');
+  changeUserAvatar({ avatar: avatarUrlInput.value })
+    .then((userData) => {
+      userAvatarElement.style = `background-image: url(${userData.avatar})`;
+      clearForm('edit-avatar');
+    })
+    .catch((error) => console.error('Failed: ', error))
+    .finally(() => changeSubmitBtnsText('Сохранить'));
 };
 
 modalWindows.forEach((modal) => {
@@ -150,7 +177,6 @@ const fetchInitialData = () => {
   Promise.all([getUserInformation(), getInitialCards()])
     .then(([userData, cardsData]) => {
       userProfileData = userData;
-      cardsCollectionData = cardsData;
       fillUserData(userData);
       renderCards(cardsData);
     })
@@ -161,6 +187,10 @@ const fillUserData = (userData) => {
   userNameElement.textContent = userData.name;
   userDescriptionElement.textContent = userData.about;
   userAvatarElement.style = `background-image: url(${userData.avatar})`;
+};
+
+const changeSubmitBtnsText = (text) => {
+  submitBtns.forEach((btn) => (btn.textContent = text));
 };
 
 const renderCards = (cards) => {

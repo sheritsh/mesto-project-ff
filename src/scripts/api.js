@@ -28,6 +28,14 @@ const changeUserInformation = async (userData) => {
   }).then(handleResponse);
 };
 
+const changeUserAvatar = async (data) => {
+  return fetch(`${config.baseUrl}/users/me/avatar`, {
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify(data),
+  }).then(handleResponse);
+};
+
 /* CARDS API */
 const getInitialCards = async () => {
   return fetch(`${config.baseUrl}/cards`, {
@@ -73,4 +81,5 @@ export {
   deleteCard,
   likeCard,
   unlikeCard,
+  changeUserAvatar,
 };
