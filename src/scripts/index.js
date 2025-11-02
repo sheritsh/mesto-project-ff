@@ -1,8 +1,8 @@
 import '../pages/index.css';
-import { initialCards } from './cards';
 import { createCardElement, handleDeleteCard, handleLikeCard } from './card';
 import { openModal } from './modal';
 import { enableValidation, clearValidation } from './validation';
+import { changeUserInformation, getInitialCards, getUserInformation, postNewCard } from './api';
 
 // DOM ELEMENTS
 const placesWrap = document.querySelector('.places__list');
@@ -10,6 +10,7 @@ const placesWrap = document.querySelector('.places__list');
 /* Profile Information */
 const userNameElement = document.querySelector('.profile__title');
 const userDescriptionElement = document.querySelector('.profile__description');
+const userAvatarElement = document.querySelector('.profile__image');
 
 /* Profile Inputs */
 const userNameInput = document.querySelector('.popup__input_type_name');
@@ -33,6 +34,9 @@ const modalWindows = document.querySelectorAll('.popup');
 const profileEditBtn = document.querySelector('.profile__edit-button');
 const cardAddBtn = document.querySelector('.profile__add-button');
 
+// GLOBAL STORE
+let userProfileData = {};
+
 // SET EVENT LISTENERS
 cardAddBtn.addEventListener('click', () => {
   openModal(cardAddModal, handleSubmitAddCard);
@@ -54,8 +58,12 @@ const fillEditProfileInputs = () => {
 const handleSubmitProfileEdit = (evt) => {
   evt.preventDefault();
 
-  userNameElement.textContent = userNameInput.value;
-  userDescriptionElement.textContent = descriptionInput.value;
+  changeUserInformation({ name: userNameInput.value, about: descriptionInput.value })
+    .then((userData) => {
+      userNameElement.textContent = userData.name;
+      userDescriptionElement.textContent = userData.about;
+    })
+    .catch((error) => console.error('Failed: ', error));
 };
 
 const clearCardAddForm = () => {
@@ -77,15 +85,19 @@ const handleOpenCard = (cardData) => {
 
 const handleSubmitAddCard = (evt) => {
   evt.preventDefault();
-  const cardData = { name: cardAddNameInput.value, link: cardAddUrlInput.value };
+  const cardInputData = { name: cardAddNameInput.value, link: cardAddUrlInput.value };
 
-  placesWrap.prepend(
-    createCardElement(cardData, {
-      onDelete: handleDeleteCard,
-      onLike: handleLikeCard,
-      onClick: handleOpenCard(cardData),
+  postNewCard(cardInputData)
+    .then((cardData) => {
+      placesWrap.prepend(
+        createCardElement(cardData, userProfileData, {
+          onDelete: handleDeleteCard,
+          onLike: handleLikeCard,
+          onClick: handleOpenCard(cardData),
+        })
+      );
     })
-  );
+    .catch((error) => console.error('Failed: ', error));
 
   clearCardAddForm();
 };
@@ -94,15 +106,33 @@ modalWindows.forEach((modal) => {
   modal.classList.add('popup_is-animated');
 });
 
-initialCards.forEach((data) => {
-  placesWrap.append(
-    createCardElement(data, {
-      onDelete: handleDeleteCard,
-      onLike: handleLikeCard,
-      onClick: handleOpenCard(data),
+const fetchInitialData = () => {
+  Promise.all([getUserInformation(), getInitialCards()])
+    .then(([userData, cardsData]) => {
+      fillUserData(userData);
+      renderCards(cardsData);
     })
-  );
-});
+    .catch((error) => console.error('Failed: ', error));
+};
+
+const fillUserData = (userData) => {
+  userProfileData = userData;
+  userNameElement.textContent = userData.name;
+  userDescriptionElement.textContent = userData.about;
+  userAvatarElement.style = `background-image: url(${userData.avatar})`;
+};
+
+const renderCards = (cards) => {
+  cards.forEach((card) => {
+    placesWrap.append(
+      createCardElement(card, userProfileData, {
+        onDelete: handleDeleteCard,
+        onLike: handleLikeCard,
+        onClick: handleOpenCard(card),
+      })
+    );
+  });
+};
 
 const validationConfig = {
   formSelector: '.popup__form',
@@ -114,3 +144,5 @@ const validationConfig = {
 };
 
 enableValidation(validationConfig);
+
+fetchInitialData();
