@@ -56,10 +56,12 @@ let userProfileData = {};
 
 // SET EVENT LISTENERS
 cardAddBtn.addEventListener('click', () => {
+  clearForm('new-place');
   openModal(cardAddModal, handleSubmitAddCard);
 });
 
 avatarEditBtn.addEventListener('click', () => {
+  clearForm('edit-avatar');
   openModal(avatarEditModal, handleSubmitChangeAvatar);
 });
 
@@ -154,16 +156,14 @@ const handleSubmitAddCard = (evt) => {
     })
     .catch((error) => console.error('Failed: ', error))
     .finally(() => changeSubmitBtnsText('Сохранить'));
-
-  clearForm('new-place');
 };
 
-const handleSubmitChangeAvatar = () => {
+const handleSubmitChangeAvatar = (evt) => {
+  evt.preventDefault();
   changeSubmitBtnsText('Сохранение...');
   changeUserAvatar({ avatar: avatarUrlInput.value })
     .then((userData) => {
       userAvatarElement.style = `background-image: url(${userData.avatar})`;
-      clearForm('edit-avatar');
     })
     .catch((error) => console.error('Failed: ', error))
     .finally(() => changeSubmitBtnsText('Сохранить'));

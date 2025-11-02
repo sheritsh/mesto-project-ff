@@ -3,35 +3,35 @@ const openModal = (modalElem, onSubmit) => {
 
   const onCloseClick = (evt) => {
     if (evt.target.matches('.popup__close') || evt.target.matches('.popup_is-opened')) {
-      closeModal(modalElem, onCloseClick, onEscKeydown, handleFormSubmit);
+      closeModal(modalElem, onCloseClick, onEscKeydown, handleModalSubmit);
     }
   };
 
   const onEscKeydown = (evt) => {
     if (evt.key === 'Escape') {
-      closeModal(modalElem, onCloseClick, onEscKeydown, handleFormSubmit);
+      closeModal(modalElem, onCloseClick, onEscKeydown, handleModalSubmit);
     }
   };
 
-  const handleFormSubmit = (evt) => {
+  const handleModalSubmit = (evt) => {
     onSubmit(evt);
-    closeModal(modalElem, onCloseClick, onEscKeydown, handleFormSubmit);
+    closeModal(modalElem, onCloseClick, onEscKeydown, handleModalSubmit);
   };
 
   modalElem.addEventListener('click', onCloseClick);
   document.addEventListener('keydown', onEscKeydown);
   if (onSubmit) {
-    modalElem.addEventListener('submit', handleFormSubmit);
+    modalElem.addEventListener('submit', handleModalSubmit);
   }
 };
 
-const closeModal = (modalElem, onCloseClick, onEscKeydown, handleFormSubmit) => {
+const closeModal = (modalElem, onCloseClick, onEscKeydown, handleModalSubmit) => {
   modalElem.classList.remove('popup_is-opened');
 
   modalElem.removeEventListener('click', onCloseClick);
   document.removeEventListener('keydown', onEscKeydown);
-  if (handleFormSubmit) {
-    modalElem.removeEventListener('submit', handleFormSubmit);
+  if (handleModalSubmit) {
+    modalElem.removeEventListener('submit', handleModalSubmit);
   }
 };
 

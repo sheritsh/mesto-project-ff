@@ -22,7 +22,7 @@ const createCardElement = (cardData, userData, { onClick, onLike, onDelete }) =>
     deleteButton.addEventListener('click', onDelete);
   }
 
-  if (cardData.likes.find((user) => user._id === userData._id)) {
+  if (cardData.likes.some((user) => user._id === userData._id)) {
     likeButton.classList.add('card__like-button_is-active');
   }
 

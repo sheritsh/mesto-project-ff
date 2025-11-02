@@ -16,13 +16,21 @@ const hideInputError = (formElement, inputElement, { inputErrorClass, errorClass
   errorElement.textContent = '';
 };
 
+const disableSubmitButton = (buttonElement, { inactiveButtonClass }) => {
+  buttonElement.classList.add(inactiveButtonClass);
+  buttonElement.disabled = true;
+};
+
+const enableSubmitButton = (buttonElement, { inactiveButtonClass }) => {
+  buttonElement.classList.remove(inactiveButtonClass);
+  buttonElement.disabled = false;
+};
+
 const toggleButtonState = (inputList, buttonElement, { inactiveButtonClass }) => {
   if (hasInvalidInput(inputList)) {
-    buttonElement.classList.add(inactiveButtonClass);
-    buttonElement.disabled = true;
+    disableSubmitButton(buttonElement, { inactiveButtonClass });
   } else {
-    buttonElement.classList.remove(inactiveButtonClass);
-    buttonElement.disabled = false;
+    enableSubmitButton(buttonElement, { inactiveButtonClass });
   }
 };
 
@@ -81,10 +89,6 @@ const enableValidation = ({
   const formList = Array.from(document.querySelectorAll(formSelector));
 
   formList.forEach((formElement) => {
-    formElement.addEventListener('submit', (evt) => {
-      evt.preventDefault();
-    });
-
     setEventListeners({
       formElement,
       inputSelector,
@@ -107,8 +111,7 @@ const clearValidation = (formElement, validationConfig) => {
     });
   });
 
-  buttonElement.classList.add(validationConfig.inactiveButtonClass);
-  buttonElement.disabled = true;
+  disableSubmitButton(buttonElement, { inactiveButtonClass: validationConfig.inactiveButtonClass });
 };
 
-export { enableValidation, clearValidation };
+export { enableValidation, clearValidation, disableSubmitButton };

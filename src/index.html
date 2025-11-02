@@ -92,6 +92,8 @@
                 placeholder="Название"
                 minlength="2"
                 maxlength="30"
+                pattern="[a-zA-Zа-яА-ЯёË, \-]+"
+                data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
                 required
               />
               <span class="popup__input-error place-name-input-error"></span>
