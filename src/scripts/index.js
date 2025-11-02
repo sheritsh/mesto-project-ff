@@ -1,8 +1,16 @@
 import '../pages/index.css';
-import { createCardElement, handleDeleteCard, handleLikeCard } from './card';
+import { createCardElement } from './card';
 import { openModal } from './modal';
 import { enableValidation, clearValidation } from './validation';
-import { changeUserInformation, getInitialCards, getUserInformation, postNewCard } from './api';
+import {
+  changeUserInformation,
+  getInitialCards,
+  getUserInformation,
+  postNewCard,
+  deleteCard,
+  likeCard,
+  unlikeCard,
+} from './api';
 
 // DOM ELEMENTS
 const placesWrap = document.querySelector('.places__list');
@@ -36,6 +44,7 @@ const cardAddBtn = document.querySelector('.profile__add-button');
 
 // GLOBAL STORE
 let userProfileData = {};
+let cardsCollectionData = [];
 
 // SET EVENT LISTENERS
 cardAddBtn.addEventListener('click', () => {
@@ -83,6 +92,37 @@ const handleOpenCard = (cardData) => {
   };
 };
 
+const handleDeleteCard = (evt) => {
+  const cardElement = evt.target.closest('.card');
+  deleteCard(cardElement.dataset.id)
+    .then(() => {
+      cardElement.remove();
+    })
+    .catch((error) => console.error('Failed: ', error));
+};
+
+const handleLikeCard = (evt) => {
+  const cardElement = evt.target.closest('.card');
+  const cardId = cardElement.dataset.id;
+  const likeCounter = cardElement.querySelector('.card__like-counter');
+
+  if (!evt.target.classList.contains('card__like-button_is-active')) {
+    likeCard(cardId)
+      .then((res) => {
+        evt.target.classList.add('card__like-button_is-active');
+        likeCounter.textContent = res.likes.length;
+      })
+      .catch((error) => console.error('Failed: ', error));
+  } else {
+    unlikeCard(cardId)
+      .then((res) => {
+        evt.target.classList.remove('card__like-button_is-active');
+        likeCounter.textContent = res.likes.length;
+      })
+      .catch((error) => console.error('Failed: ', error));
+  }
+};
+
 const handleSubmitAddCard = (evt) => {
   evt.preventDefault();
   const cardInputData = { name: cardAddNameInput.value, link: cardAddUrlInput.value };
@@ -109,6 +149,8 @@ modalWindows.forEach((modal) => {
 const fetchInitialData = () => {
   Promise.all([getUserInformation(), getInitialCards()])
     .then(([userData, cardsData]) => {
+      userProfileData = userData;
+      cardsCollectionData = cardsData;
       fillUserData(userData);
       renderCards(cardsData);
     })
@@ -116,7 +158,6 @@ const fetchInitialData = () => {
 };
 
 const fillUserData = (userData) => {
-  userProfileData = userData;
   userNameElement.textContent = userData.name;
   userDescriptionElement.textContent = userData.about;
   userAvatarElement.style = `background-image: url(${userData.avatar})`;

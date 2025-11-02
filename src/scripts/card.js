@@ -1,5 +1,3 @@
-import { deleteCard } from './api';
-
 const cardTemplate = document
   .querySelector('#card-template')
   .content.querySelector('.places__item');
@@ -24,23 +22,14 @@ const createCardElement = (cardData, userData, { onClick, onLike, onDelete }) =>
     deleteButton.addEventListener('click', onDelete);
   }
 
+  if (cardData.likes.find((user) => user._id === userData._id)) {
+    likeButton.classList.add('card__like-button_is-active');
+  }
+
   likeButton.addEventListener('click', onLike);
   cardImage.addEventListener('click', onClick);
 
   return cardElement;
 };
 
-const handleDeleteCard = (evt) => {
-  const cardElement = evt.target.closest('.card');
-  deleteCard(cardElement.dataset.id)
-    .then((res) => {
-      cardElement.remove();
-    })
-    .catch((error) => console.error('Failed: ', error));
-};
-
-const handleLikeCard = (evt) => {
-  evt.target.classList.toggle('card__like-button_is-active');
-};
-
-export { createCardElement, handleDeleteCard, handleLikeCard };
+export { createCardElement };
